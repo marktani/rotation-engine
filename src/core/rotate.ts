@@ -1,4 +1,4 @@
-import type { TableContent, TableWidth } from '../types/core/rotate';
+import type { TableContent, TableWidth } from './types';
 import { getBottomRegion, getLeftRegion, getRightRegion, getTopRegion } from './region';
 import { getHighestLayer } from './table';
 import { verifyTableContentAndThrow } from './verify';

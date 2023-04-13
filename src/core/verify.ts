@@ -1,4 +1,4 @@
-import type { Layer, TableContent, TableWidth } from '../types/core/rotate';
+import type { Layer, TableContent, TableWidth } from './types';
 import { getHighestLayer } from './table';
 import { isSquare } from './utils';
 

@@ -1,4 +1,4 @@
-import type { TableWidth } from '../types/core/rotate';
+import type { TableWidth } from './types';
 
 /**
  * @param {number} n - the table width

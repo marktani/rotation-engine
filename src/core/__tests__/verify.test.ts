@@ -1,4 +1,4 @@
-import type { TableContent } from '../../types/core/rotate';
+import type { TableContent } from '../types';
 import { verifyLayer, verifyTableContent } from '../verify';
 
 describe('verify', () => {
