@@ -1,7 +1,7 @@
 import type { TableContent, TableWidth } from './types';
 import { getBottomRegion, getLeftRegion, getRightRegion, getTopRegion } from './region';
 import { getHighestLayer } from './table';
-import { verifyTableContentAndThrow } from './verify';
+import { verifyTableContent } from './verify';
 
 /**
  * This file defines an operation to rotate a `table` to the left.
@@ -45,10 +45,13 @@ import { verifyTableContentAndThrow } from './verify';
  * Rotates a given table to the left.
  *
  * @param data the content of a square table
- * @returns the content for a new table with the elements from `data` rotated to the left
+ * @returns the content for a new table with the elements from `data` rotated to the left.
+ * returns `null` if `data` is not a valid table.
  */
-export const rotateTableLeft = (data: TableContent): TableContent => {
-  verifyTableContentAndThrow(data);
+export const rotateTableLeft = (data: TableContent): TableContent | null => {
+  if (!verifyTableContent(data)) {
+    return null;
+  }
 
   const n: TableWidth = Math.sqrt(data.length);
   // prettier-ignore

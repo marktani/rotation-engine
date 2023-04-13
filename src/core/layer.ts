@@ -1,6 +1,6 @@
 import type { TableWidth, Layer } from './types';
 import { getRegionSize } from './region';
-import { verifyLayerAndThrow } from './verify';
+import { verifyLayer } from './verify';
 
 /**
  * @param {number} n - the table width
@@ -25,7 +25,7 @@ export const getLayerWidth = (n: TableWidth, l: Layer): number => {
  * @returns {number} the number of elements in the current layer
  */
 export const getLayerSize = (n: TableWidth, l: Layer): number => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   const layerWidth = getLayerWidth(n, l);
 
@@ -46,7 +46,7 @@ export const getLayerSize = (n: TableWidth, l: Layer): number => {
  * @returns {number} The first index in the table belonging to the current layer
  */
 export const getStart = (n: TableWidth, l: Layer): number => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   return l * (n + 1);
 };
@@ -57,7 +57,7 @@ export const getStart = (n: TableWidth, l: Layer): number => {
  * @returns {number} The last index in the table belonging to the current layer
  */
 export const getEnd = (n: TableWidth, l: Layer): number => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   return n * n - 1 - (n + 1) * l;
 };

@@ -5,10 +5,10 @@
 
 import type { TableWidth, Layer, Region } from './types';
 import { getEnd, getStart } from './layer';
-import { verifyLayerAndThrow } from './verify';
+import { verifyLayer } from './verify';
 
 export const getRegionSize = (n: TableWidth, l: Layer): number => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   return Math.max(1, n - 1 - 2 * l);
 };
@@ -19,7 +19,7 @@ export const getRegionSize = (n: TableWidth, l: Layer): number => {
  * @returns {number} The top region of the current layer
  */
 export const getTopRegion = (n: TableWidth, l: Layer): Region => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   const offset = getStart(n, l);
 
@@ -36,7 +36,7 @@ export const getTopRegion = (n: TableWidth, l: Layer): Region => {
  * @returns {number} The left region of the current layer
  */
 export const getLeftRegion = (n: TableWidth, l: Layer): Region => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   const offset = getStart(n, l);
 
@@ -53,7 +53,7 @@ export const getLeftRegion = (n: TableWidth, l: Layer): Region => {
  * @returns {number} The bottom region of the current layer
  */
 export const getBottomRegion = (n: TableWidth, l: Layer): Region => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   const offset = getEnd(n, l);
 
@@ -70,7 +70,7 @@ export const getBottomRegion = (n: TableWidth, l: Layer): Region => {
  * @returns {number} The right region of the current layer
  */
 export const getRightRegion = (n: TableWidth, l: Layer): Region => {
-  verifyLayerAndThrow(n, l);
+  verifyLayer(n, l);
 
   const offset = getEnd(n, l);
 
