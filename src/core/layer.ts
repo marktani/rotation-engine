@@ -1,3 +1,4 @@
+import type { TableWidth, Layer } from '../types/core/rotate';
 import { getRegionSize } from './region';
 import { verifyLayerAndThrow } from './verify';
 

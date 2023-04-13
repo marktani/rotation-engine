@@ -3,6 +3,7 @@
  * and `l` denotes the current layer.
  */
 
+import type { TableWidth, Layer, Region } from '../types/core/rotate';
 import { getEnd, getStart } from './layer';
 import { verifyLayerAndThrow } from './verify';
 

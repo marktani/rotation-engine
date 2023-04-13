@@ -1,3 +1,4 @@
+import type { TableContent, TableWidth } from '../types/core/rotate';
 import { getBottomRegion, getLeftRegion, getRightRegion, getTopRegion } from './region';
 import { getHighestLayer } from './table';
 import { verifyTableContentAndThrow } from './verify';
@@ -77,22 +78,22 @@ export const rotateTableLeft = (data: TableContent): TableContent => {
     const rightRegion = getRightRegion(n, layer);
 
     // top elements move left
-    for (const element of topRegion) {
+    for (const element of Array.from(topRegion.values())) {
       rotatedTableContent[element] = data[element + 1];
     }
 
     // left elements move down
-    for (const element of leftRegion) {
+    for (const element of Array.from(leftRegion.values())) {
       rotatedTableContent[element] = data[element - n];
     }
 
     // bottom elements move right
-    for (const element of bottomRegion) {
+    for (const element of Array.from(bottomRegion.values())) {
       rotatedTableContent[element] = data[element - 1];
     }
 
     // right elements move up
-    for (const element of rightRegion) {
+    for (const element of Array.from(rightRegion.values())) {
       rotatedTableContent[element] = data[element + n];
     }
   }

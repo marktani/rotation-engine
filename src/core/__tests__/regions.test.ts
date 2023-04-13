@@ -1,3 +1,4 @@
+import type { Region } from '../../types/core/rotate';
 import { getBottomRegion, getLeftRegion, getRegionSize, getRightRegion, getTopRegion } from '../region';
 
 describe('regions', () => {

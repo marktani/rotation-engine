@@ -1,3 +1,5 @@
+import type { TableWidth } from '../types/core/rotate';
+
 /**
  * @param {number} n - the table width
  * @returns {number} the highest layer of the table

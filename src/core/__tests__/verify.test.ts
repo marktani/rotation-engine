@@ -1,7 +1,8 @@
-import { verifyLayerAndThrow, verifyTableContentAndThrow } from '../verify';
+import type { TableContent } from '../../types/core/rotate';
+import { verifyLayer, verifyTableContent } from '../verify';
 
 describe('verify', () => {
-  describe('verifyLayerAndThrow', () => {
+  describe('verifyLayer', () => {
     const tooGreatFixtures: number[][] = [
       [4, 5],
       [4, 4],
@@ -20,9 +21,9 @@ describe('verify', () => {
       [10, 5],
     ];
     test.each(tooGreatFixtures)(
-      'throws an error for a table with width %j if the current layer %j is too great',
+      'returns false for a table with width %j if the current layer %j is too great',
       (n, l) => {
-        expect(() => verifyLayerAndThrow(n, l)).toThrowError();
+        expect(verifyLayer(n, l)).toBe(false);
       },
     );
 
@@ -32,9 +33,9 @@ describe('verify', () => {
       [10, -3],
     ];
     test.each(tooSmallFixtures)(
-      'throws an error for a table with width %j if the current layer %j is too small',
+      'returns false for a table with width %j if the current layer %j is too small',
       (n, l) => {
-        expect(() => verifyLayerAndThrow(n, l)).toThrowError();
+        expect(verifyLayer(n, l)).toBe(false);
       },
     );
 
@@ -51,20 +52,20 @@ describe('verify', () => {
       [10, 0],
     ];
     test.each(validFixtures)('returns true for a table with width %j and a valid current layer %j', (n, l) => {
-      expect(verifyLayerAndThrow(n, l)).toBe(true);
+      expect(verifyLayer(n, l)).toBe(true);
     });
   });
 
-  describe('verifyTableContentAndThrow', () => {
+  describe('verifyTableContent', () => {
     const nonSquareFixtures: TableContent[] = [[1, 2]];
-    test.each(nonSquareFixtures)('throws an error for a nonsquare table %j', (...content) => {
-      expect(() => verifyTableContentAndThrow(content)).toThrowError();
+    test.each(nonSquareFixtures)('returns false for a nonsquare table %j', (...content) => {
+      expect(verifyTableContent(content)).toBe(false);
     });
 
     const validFixture: TableContent[] = [[-2], [0, 1, 2, 3], [1, 2, 3, 4, 5, 6, 7, 8, 9]];
 
     test.each(validFixture)('returns true for a valid table %j', (...content) => {
-      expect(verifyTableContentAndThrow(content)).toBe(true);
+      expect(verifyTableContent(content)).toBe(true);
     });
   });
 });
