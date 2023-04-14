@@ -4,6 +4,8 @@ export interface Table {
 }
 export type TableContent = number[];
 
+export type TableTransformation = (TableContent) => TableContent | null;
+
 export type Region = Set<number>;
 
 export type Layer = number;

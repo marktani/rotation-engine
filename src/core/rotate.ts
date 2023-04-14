@@ -71,7 +71,7 @@ export const rotateTableLeft = (data: TableContent): TableContent | null => {
     return [...data];
   }
 
-  const rotatedTableContent: number[] = [];
+  const rotatedTableContent: TableContent = [];
 
   // we start in the outer layer and work inwards
   for (let layer = 0; layer < getHighestLayer(n); layer++) {

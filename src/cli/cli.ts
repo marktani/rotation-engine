@@ -1,8 +1,9 @@
-import { PathLike } from 'fs';
-import { rotateTablesFromCsv } from '../csv/parse';
+import * as fs from 'fs';
+import { transformTablesFromCsvStream } from '../csv/parse';
+import { rotateTableLeft } from '../core/rotate';
 
 const args = process.argv;
 
-const input = args[2] as PathLike;
+const input = args[2] as fs.PathLike;
 
-rotateTablesFromCsv(input, process.stdout);
+transformTablesFromCsvStream(fs.createReadStream(input), rotateTableLeft, process.stdout);

@@ -1,44 +1,61 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import { Transform, Writable } from 'stream';
+import { Readable, Writable, pipeline } from 'stream';
 
 import * as csv from 'fast-csv';
 import { match } from 'ts-pattern';
 
-import { rotateTableLeft } from '../core/rotate';
 import { verifyTableContent } from '../core/verify';
-import { verifyCsvHeaders } from './verify';
+import type { Table, TableTransformation } from '../core/types';
 
-const readTableFromRowAndRotateLeft = new Transform({
-  objectMode: true,
-  transform(row, encoding, callback) {
-    const table = { id: row.id, content: JSON.parse(row.json) };
-    let outputRow = match(verifyTableContent(table.content))
-      .with(true, () => `${table.id},"${JSON.stringify(rotateTableLeft(table.content))}",true`)
-      .with(false, () => `${table.id},"[]",false`)
+interface TableRow {
+  id: string;
+  json: string;
+}
+
+const rowToTable = (tableRow: TableRow): Table => {
+  return { id: tableRow.id, content: JSON.parse(tableRow.json) };
+};
+
+const createTransform = (tableTransformation: TableTransformation) => {
+  return (tableRow: TableRow) => {
+    const table = rowToTable(tableRow);
+
+    const result = match(verifyTableContent(table.content))
+      .with(true, () => ({
+        id: table.id,
+        json: `"${JSON.stringify(tableTransformation(table.content))}"`,
+        is_valid: true,
+      }))
+      .with(false, () => ({
+        id: table.id,
+        json: `"[]"`,
+        is_valid: false,
+      }))
       .exhaustive();
 
-    outputRow += os.EOL;
+    return result;
+  };
+};
 
-    callback(null, outputRow);
-  },
-});
-
-export const rotateTablesFromCsv = (path: fs.PathLike, output: Writable): void => {
-  fs.createReadStream(path)
-    .pipe(csv.parse({ headers: true, delimiter: ',' }))
-    .on('headers', (headers) => {
-      if (verifyCsvHeaders(headers)) {
-        output.write('id,json,is_valid');
-        output.write(os.EOL);
-      } else {
-        throw Error('invalid headers in csv file');
-      }
-    })
-    .pipe(readTableFromRowAndRotateLeft)
-    .pipe(output)
-    .on('error', (e) => {
-      // fail fast
-      throw e;
-    });
+export const transformTablesFromCsvStream = (
+  input: Readable,
+  tableTransformation: TableTransformation,
+  output: Writable,
+) => {
+  return new Promise<void>((resolve, reject) => {
+    pipeline(
+      input,
+      csv.parse({ headers: (headers) => [...headers, 'is_valid'] }),
+      csv.format({ headers: true, transform: createTransform(tableTransformation), quote: false }),
+      output,
+      (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      },
+    );
+  });
 };

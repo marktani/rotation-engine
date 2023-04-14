@@ -1,6 +1,7 @@
 import { rotateTableLeft } from '../rotate';
+import type { TableContent } from '../types';
 
-describe('rotateLef', () => {
+describe('rotateLeft', () => {
   describe('base cases', () => {
     // prettier-ignore
     const fixtures: [number[], number[]][] = [
@@ -49,6 +50,12 @@ describe('rotateLef', () => {
 
     test.each(fixtures)('rotates table %j correctly to the left', (input, output) => {
       expect(rotateTableLeft(input)).toEqual(output);
+    });
+  });
+
+  describe('invalid table', () => {
+    test('returns null for invalid table %j', () => {
+      expect(rotateTableLeft([1, 2])).toEqual(null);
     });
   });
 });

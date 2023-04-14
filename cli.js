@@ -3873,9 +3873,10 @@ var require_lib = __commonJS({
   }
 });
 
-// src/csv/parse.ts
+// src/cli/cli.ts
 var fs = __toESM(require("fs"));
-var os = __toESM(require("os"));
+
+// src/csv/parse.ts
 var import_stream = require("stream");
 var csv = __toESM(require_src3());
 var import_ts_pattern = __toESM(require_lib());
@@ -3904,6 +3905,43 @@ var verifyTableContent = (data) => {
     return false;
   }
   return true;
+};
+
+// src/csv/parse.ts
+var rowToTable = (tableRow) => {
+  return { id: tableRow.id, content: JSON.parse(tableRow.json) };
+};
+var createTransform = (tableTransformation) => {
+  return (tableRow) => {
+    const table = rowToTable(tableRow);
+    const result = (0, import_ts_pattern.match)(verifyTableContent(table.content)).with(true, () => ({
+      id: table.id,
+      json: `"${JSON.stringify(tableTransformation(table.content))}"`,
+      is_valid: true
+    })).with(false, () => ({
+      id: table.id,
+      json: `"[]"`,
+      is_valid: false
+    })).exhaustive();
+    return result;
+  };
+};
+var transformTablesFromCsvStream = (readable, tableTransformation, output) => {
+  return new Promise((resolve, reject) => {
+    (0, import_stream.pipeline)(
+      readable,
+      csv.parse({ headers: (headers) => [...headers, "is_valid"], objectMode: true }),
+      csv.format({ headers: true, transform: createTransform(tableTransformation), quote: false }),
+      output,
+      (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      }
+    );
+  });
 };
 
 // src/core/layer.ts
@@ -4004,38 +4042,7 @@ var rotateTableLeft = (data) => {
   return rotatedTableContent;
 };
 
-// src/csv/verify.ts
-var verifyCsvHeaders = (headers) => {
-  if (headers.length === 2 && headers[0] === "id" && headers[1] === "json") {
-    return true;
-  }
-  return false;
-};
-
-// src/csv/parse.ts
-var readTableFromRowAndRotateLeft = new import_stream.Transform({
-  objectMode: true,
-  transform(row, encoding, callback) {
-    const table = { id: row.id, content: JSON.parse(row.json) };
-    let outputRow = (0, import_ts_pattern.match)(verifyTableContent(table.content)).with(true, () => `${table.id},"${JSON.stringify(rotateTableLeft(table.content))}",true`).with(false, () => `${table.id},"[]",false`).exhaustive();
-    outputRow += os.EOL;
-    callback(null, outputRow);
-  }
-});
-var rotateTablesFromCsv = (path, output) => {
-  fs.createReadStream(path).pipe(csv.parse({ headers: true, delimiter: "," })).on("headers", (headers) => {
-    if (verifyCsvHeaders(headers)) {
-      output.write("id,json,is_valid");
-      output.write(os.EOL);
-    } else {
-      throw Error("invalid headers in csv file");
-    }
-  }).pipe(readTableFromRowAndRotateLeft).pipe(output).on("error", (e) => {
-    throw e;
-  });
-};
-
 // src/cli/cli.ts
 var args = process.argv;
 var input = args[2];
-rotateTablesFromCsv(input, process.stdout);
+transformTablesFromCsvStream(fs.createReadStream(input), rotateTableLeft, process.stdout);
