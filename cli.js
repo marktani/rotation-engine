@@ -3926,11 +3926,11 @@ var createTransform = (tableTransformation) => {
     return result;
   };
 };
-var transformTablesFromCsvStream = (readable, tableTransformation, output) => {
+var transformTablesFromCsvStream = (input2, tableTransformation, output) => {
   return new Promise((resolve, reject) => {
     (0, import_stream.pipeline)(
-      readable,
-      csv.parse({ headers: (headers) => [...headers, "is_valid"], objectMode: true }),
+      input2,
+      csv.parse({ headers: (headers) => [...headers, "is_valid"] }),
       csv.format({ headers: true, transform: createTransform(tableTransformation), quote: false }),
       output,
       (error) => {

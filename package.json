@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./build && tsc --noEmit && esbuild src/cli/cli.ts --bundle --platform=node --outfile=cli.js",
+    "build": "rimraf ./cli.js && tsc --noEmit && esbuild src/cli/cli.ts --bundle --platform=node --outfile=cli.js",
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "test": "jest",
